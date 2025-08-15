@@ -1,0 +1,26 @@
+package com.chatapp.controller;
+
+import com.chatapp.entity.User;
+import com.chatapp.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/user")
+@CrossOrigin
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    @PostMapping("/register")
+    public User register(@RequestBody User user) {
+        return userService.registerUser(user);
+    }
+
+    @PostMapping("/login")
+    public Optional<User> login(@RequestBody User user) {
+        return userService.loginUser(user.getUsername(), user.getPassword());
+    }
+}

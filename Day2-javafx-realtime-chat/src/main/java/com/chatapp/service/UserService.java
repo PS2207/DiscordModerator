@@ -1,0 +1,14 @@
+package com.chatapp.service;
+
+import com.chatapp.entity.User;
+
+import org.springframework.stereotype.Service;
+import java.util.Optional;
+
+public interface UserService {
+
+    public User registerUser(User user);
+
+    public Optional<User> loginUser(String username, String password);
+}
+

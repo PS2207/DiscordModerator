@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - ChatApp</title>
+    <style>
+        body { font-family: Arial; background: #f4f6f8; display: flex; flex-direction: column; align-items: center; padding: 30px; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 3px 6px rgba(0,0,0,0.1); width: 300px; }
+        input, button { width: 100%; padding: 8px; margin: 6px 0; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #2196F3; color: white; border: none; cursor: pointer; }
+        button:hover { background: #1976D2; }
+        pre { background: #f0f0f0; padding: 10px; white-space: pre-wrap; border-radius: 4px; font-size: 12px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<h1>Login</h1>
+<div class="container">
+    <input id="loginUser" placeholder="Username">
+    <input id="loginPass" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <pre id="loginResult"></pre>
+</div>
+
+<script>
+const BASE_URL = window.location.origin + "/api/user";
+
+async function login() {
+    const username = document.getElementById("loginUser").value;
+    const password = document.getElementById("loginPass").value;
+    try {
+        const res = await fetch(`${BASE_URL}/login`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({username, password})
+        });
+        if (res.ok) {
+            document.getElementById("loginResult").textContent = "Login successful!";
+        } else {
+            document.getElementById("loginResult").textContent = "Login failed: " + await res.text();
+        }
+    } catch (err) {
+        document.getElementById("loginResult").textContent = "Error: " + err;
+    }
+}
+</script>
+
+</body>
+</html>

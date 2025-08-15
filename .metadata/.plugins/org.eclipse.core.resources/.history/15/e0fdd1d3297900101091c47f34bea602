@@ -1,0 +1,3 @@
+spring.application.name=Day2-javafx-realtime-chat
+
+server.port=8082

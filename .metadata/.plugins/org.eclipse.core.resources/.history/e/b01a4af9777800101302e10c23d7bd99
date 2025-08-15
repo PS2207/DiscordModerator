@@ -1,0 +1,5 @@
+spring.application.name=javafx-realtime-chat
+
+server.port=8081
+
+

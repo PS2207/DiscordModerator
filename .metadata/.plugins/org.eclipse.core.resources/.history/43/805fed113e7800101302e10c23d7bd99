@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Chat Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #chat {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #e5ddd5;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-message {
+            margin: 5px 0;
+            padding: 8px 12px;
+            border-radius: 15px;
+            max-width: 60%;
+            word-wrap: break-word;
+            position: relative;
+            clear: both;
+        }
+
+        .sent {
+            background-color: #dcf8c6;
+            align-self: flex-end;
+        }
+
+        .received {
+            background-color: #fff;
+            align-self: flex-start;
+        }
+
+        .timestamp {
+            font-size: 10px;
+            color: gray;
+            display: block;
+            text-align: right;
+            margin-top: 2px;
+        }
+
+        input, button {
+            padding: 8px;
+            margin: 2px 0;
+        }
+
+        #message {
+            width: 300px;
+        }
+
+        #input-area {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Java WebSocket Chat</h2>
+
+    <input id="name" placeholder="Your name"><br>
+
+    <div id="input-area">
+        <input id="message" placeholder="Type a message">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <div id="chat"></div>
+
+    <script>
+        let stompClient = null;
+
+        function connect() {
+            const socket = new SockJS('/chat');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function(frame) {
+                console.log('Connected: ' + frame);
+
+                // Subscribe to incoming messages
+                stompClient.subscribe('/topic/messages', function(msg) {
+                    const chatMessage = JSON.parse(msg.body);
+                    appendMessage(chatMessage);
+                });
+            });
+        }
+
+        function appendMessage(chatMessage) {
+            const msgDiv = document.createElement('div');
+
+            // Determine if message is sent by me or received
+            const myName = document.getElementById('name').value;
+            msgDiv.className = chatMessage.sender === myName ? 'chat-message sent' : 'chat-message received';
+
+            // Message content + timestamp
+            msgDiv.innerHTML = `<strong>${chatMessage.sender}</strong><br>${chatMessage.content}<span class="timestamp">${chatMessage.timestamp || new Date().toLocaleTimeString()}</span>`;
+
+            // Append to chat and scroll to bottom
+            const chatContainer = document.getElementById('chat');
+            chatContainer.appendChild(msgDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function sendMessage() {
+            const name = document.getElementById('name').value.trim();
+            const messageContent = document.getElementById('message').value.trim();
+
+            if (!name) {
+                alert('Please enter your name!');
+                return;
+            }
+
+            if (stompClient && stompClient.connected && messageContent) {
+                const chatMessage = { sender: name, content: messageContent, timestamp: new Date().toLocaleTimeString() };
+                stompClient.send("/app/send", {}, JSON.stringify(chatMessage));
+                document.getElementById('message').value = '';
+            } else {
+                alert('Not connected or message empty!');
+            }
+        }
+
+        // Connect when page loads
+        connect();
+    </script>
+</body>
+</html>

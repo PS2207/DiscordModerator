@@ -1,0 +1,31 @@
+package com.chatapp.controller;
+
+import com.chatapp.entity.User;
+import com.chatapp.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/user")
+@CrossOrigin
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    @PostMapping("/register")
+    public User register(@RequestBody User user) {
+        return userService.registerUser(user);
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestBody User user) {
+        Optional<User> loggedInUser = userService.loginUser(user.getUsername(), user.getPassword());
+        return loggedInUser.isPresent() ? "Login Successful" : "Invalid Credentials";
+       
+    }
+
+}
+//POST - http://localhost:8082/api/user/register
+//POST - http://localhost:8082/api/user/login

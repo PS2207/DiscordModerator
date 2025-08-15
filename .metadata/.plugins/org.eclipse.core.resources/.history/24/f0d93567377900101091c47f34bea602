@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      width: 320px;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+    label {
+      display: block;
+      text-align: left;
+      margin: 10px 0 4px;
+      font-size: 14px;
+      color: #555;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #1976D2;
+    }
+    .links {
+      margin-top: 12px;
+      font-size: 14px;
+    }
+    .links a {
+      color: #2196F3;
+      text-decoration: none;
+    }
+    .links a:hover {
+      text-decoration: underline;
+    }
+    .message {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #d9534f;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>Login</h2>
+  <form id="loginForm">
+    <label>Username</label>
+    <input id="loginUser" autocomplete="username" placeholder="Enter username">
+    <label>Password</label>
+    <input id="loginPass" type="password" autocomplete="current-password" placeholder="Enter password">
+    <button type="submit">Login</button>
+  </form>
+  <div class="links">
+    Don't have an account? <a href="register.html">Register</a>
+  </div>
+  <div class="message" id="loginResult"></div>
+</div>
+
+<script>
+const API = new URL('/api/user', window.location.origin);
+
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const username = document.getElementById('loginUser').value.trim();
+  const password = document.getElementById('loginPass').value;
+  const msg = document.getElementById('loginResult');
+
+  if (!username || !password) {
+    msg.textContent = 'Please fill out all fields.';
+    return;
+  }
+
+  try {
+    const res = await fetch(new URL('login', API), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+
+    const text = await res.text();
+    msg.style.color = res.ok ? 'green' : '#d9534f';
+    msg.textContent = res.ok ? 'Login successful! Redirecting...' : text;
+
+    if (res.ok) setTimeout(() => location.href = 'chat.html', 1500); // change target page as needed
+  } catch (err) {
+    msg.textContent = 'Network error: ' + err;
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+package com.chatapp.controllers;
+
+import java.security.Principal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.stereotype.Controller;
+
+import com.chatapp.model.ChatMessage;
+
+@Controller
+public class ChatController {
+  /*	
+    @MessageMapping("/send")
+    @SendTo("/topic/messages")
+    public ChatMessage send(ChatMessage message) {
+        message.setTimestamp(LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+        return message;
+    }
+    
+*/
+
+//Ignore client-sent sender and use the authenticated Principal in your controller:
+ // com.chatapp.controllers.ChatController.java
+    @MessageMapping("/send")
+    @SendTo("/topic/messages")
+    public ChatMessage send(ChatMessage incoming, Principal principal) {
+        ChatMessage msg = new ChatMessage();
+        msg.setSender(principal != null ? principal.getName() : "anonymous");
+        msg.setContent(incoming.getContent());  // only take content from client
+        msg.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+        return msg;
+    }
+    
+    
+
+}

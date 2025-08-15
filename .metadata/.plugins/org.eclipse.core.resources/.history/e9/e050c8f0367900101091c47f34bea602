@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7; /* Light neutral background */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      width: 320px;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+    label {
+      display: block;
+      text-align: left;
+      margin: 10px 0 4px;
+      font-size: 14px;
+      color: #555;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    .links {
+      margin-top: 12px;
+      font-size: 14px;
+    }
+    .links a {
+      color: #4CAF50;
+      text-decoration: none;
+    }
+    .links a:hover {
+      text-decoration: underline;
+    }
+    .message {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #d9534f;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>Create Account</h2>
+  <form id="regForm">
+    <label>Username</label>
+    <input id="regUser" autocomplete="username" placeholder="Enter username">
+    <label>Password</label>
+    <input id="regPass" type="password" autocomplete="new-password" placeholder="Enter password">
+    <button type="submit">Register</button>
+  </form>
+  <div class="links">
+    Already have an account? <a href="login.html">Login</a>
+  </div>
+  <div class="message" id="regResult"></div>
+</div>
+
+<script>
+const API = new URL('/api/user', window.location.origin);
+
+document.getElementById('regForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const username = document.getElementById('regUser').value.trim();
+  const password = document.getElementById('regPass').value;
+  const msg = document.getElementById('regResult');
+
+  if (!username || !password) {
+    msg.textContent = 'Please fill out all fields.';
+    return;
+  }
+
+  try {
+    const res = await fetch(new URL('register', API), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+
+    const text = await res.text();
+    msg.style.color = res.ok ? 'green' : '#d9534f';
+    msg.textContent = res.ok ? 'Registration successful! Redirecting...' : text;
+
+    if (res.ok) setTimeout(() => location.href = 'login.html', 1500);
+  } catch (err) {
+    msg.textContent = 'Network error: ' + err;
+  }
+});
+</script>
+
+</body>
+</html>

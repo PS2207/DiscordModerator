@@ -1,0 +1,25 @@
+package com.chatapp;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class JavafxRealtimeChatApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(JavafxRealtimeChatApplication.class, args);
+	}
+
+}
+/*
+Right now server is probably accepting whatever the client sends as sender name.
+That means someone could fake it. so needs to modify it
+If you already have authentication, you can extract the username from the session/JWT instead of from the message body.
+
+so the username in messages to be secure and not fake-able, the correct flow is:
+Register Page – user creates an account in your Spring Boot backend (stored in DB).
+Login Page – user logs in and gets an authenticated session (Spring Security).
+WebSocket Handshake – WebSocket connection is established after login, so principal.getName() in your ChatController will return the logged-in username automatically.
+Send Messages – since the username comes from principal, no one can fake it in the client.
+
+*/

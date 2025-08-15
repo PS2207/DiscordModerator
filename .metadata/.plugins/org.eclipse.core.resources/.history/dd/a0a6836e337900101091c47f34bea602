@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - ChatApp</title>
+    <style>
+        body { font-family: Arial; background: #f4f6f8; display: flex; flex-direction: column; align-items: center; padding: 30px; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 3px 6px rgba(0,0,0,0.1); width: 300px; }
+        input, button { width: 100%; padding: 8px; margin: 6px 0; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background: #45a049; }
+        pre { background: #f0f0f0; padding: 10px; white-space: pre-wrap; border-radius: 4px; font-size: 12px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<h1>Register</h1>
+<div class="container">
+    <input id="regUser" placeholder="Username">
+    <input id="regPass" type="password" placeholder="Password">
+    <button onclick="register()">Register</button>
+    <pre id="regResult"></pre>
+</div>
+
+<script>
+const BASE_URL = window.location.origin + "/api/user";
+
+async function register() {
+    const username = document.getElementById("regUser").value;
+    const password = document.getElementById("regPass").value;
+    try {
+        const res = await fetch(`${BASE_URL}/register`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({username, password})
+        });
+        if (res.ok) {
+            document.getElementById("regResult").textContent = "Registration successful! Redirecting to login...";
+            setTimeout(() => {
+                window.location.href = "login.html";
+            }, 1500);
+        } else {
+            document.getElementById("regResult").textContent = "Registration failed: " + await res.text();
+        }
+    } catch (err) {
+        document.getElementById("regResult").textContent = "Error: " + err;
+    }
+}
+</script>
+
+</body>
+</html>

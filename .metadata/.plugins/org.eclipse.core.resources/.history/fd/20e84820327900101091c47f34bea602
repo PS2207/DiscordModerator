@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ChatApp Login/Register Test</title>
+</head>
+<body>
+    <h1>Test Register & Login</h1>
+
+    <h2>Register</h2>
+    <input id="regUser" placeholder="Username"><br>
+    <input id="regPass" type="password" placeholder="Password"><br>
+    <button onclick="register()">Register</button>
+    <pre id="regResult"></pre>
+
+    <h2>Login</h2>
+    <input id="loginUser" placeholder="Username"><br>
+    <input id="loginPass" type="password" placeholder="Password"><br>
+    <button onclick="login()">Login</button>
+    <pre id="loginResult"></pre>
+
+<script>
+const BASE_URL = "http://localhost:8082/api/user";
+
+async function register() {
+    const username = document.getElementById("regUser").value;
+    const password = document.getElementById("regPass").value;
+    const res = await fetch(`${BASE_URL}/register`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({username, password})
+    });
+    document.getElementById("regResult").textContent = await res.text();
+}
+
+async function login() {
+    const username = document.getElementById("loginUser").value;
+    const password = document.getElementById("loginPass").value;
+    const res = await fetch(`${BASE_URL}/login`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({username, password})
+    });
+    document.getElementById("loginResult").textContent = await res.text();
+}
+</script>
+</body>
+</html>
